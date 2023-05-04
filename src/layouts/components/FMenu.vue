@@ -50,7 +50,7 @@ const route = useRoute()
 const userMenu = store.state.user.data.menus
 
 const isCollapse = computed(() => {
-  return store.state.asideWidth == "300px" ? false : true
+  return store.state.asideWidth == "250px" ? false : true
 })
 
 const activePath = ref(route.path)

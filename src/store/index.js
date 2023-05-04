@@ -10,7 +10,7 @@ const store = createStore({
             user: {},
             is_loading_login: false,
             //展开或缩起菜单
-            asideWidth: "300px",
+            asideWidth: "250px",
             rules : [],
         }
     },
@@ -25,7 +25,7 @@ const store = createStore({
             state.user = {}
         },
         isAsideWidth(state) {
-            state.asideWidth = state.asideWidth == "64px" ? "300px" :  "64px"
+            state.asideWidth = state.asideWidth == "64px" ? "250px" :  "64px"
         },
         set_rulesName(state, rules) {
             state.rules = rules

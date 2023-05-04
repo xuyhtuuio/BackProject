@@ -9,7 +9,7 @@
       </div>
 
       <el-icon class="icon-btn" @click="handleExpod">
-        <expand v-if="$store.state.asideWidth == '300px'"/>
+        <expand v-if="$store.state.asideWidth == '250px'"/>
         <fold v-else/>
       </el-icon>
       <el-tooltip effect="dark" content="刷新" placement="bottom">
