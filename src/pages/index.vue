@@ -45,19 +45,25 @@
       </el-card>
     </el-col>
     </el-row>
-
     <index-navs />
+
+    <el-row :gutter="20" class="mt-5">
+      <el-col :span="12">
+        <index-chart />
+      </el-col>
+    </el-row>
   </div>
 </template>
 
 
 
 <script setup>
-import {getBackStatisticsFirst} from "~/api/backGroundMainPage.js";
+import {getBackStatisticsFirst, getBackStatisticsThird} from "~/api/backGroundMainPage.js";
 import {ref} from "vue";
 import {logout} from "../api/manager.js";
 import CountTo from "~/components/CountTo.vue";
 import IndexNavs from "~/components/indexNavs.vue";
+import IndexChart from "~/components/indexChart.vue";
 const panels = ref([])
 getBackStatisticsFirst().then(r => panels.value = Array.from(r.data.panels))
 
