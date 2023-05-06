@@ -51,7 +51,6 @@ export function encaTagList() {
 //动态获取列表
     function initTabList() {
         let tbs = cookies.get("tabList");
-        console.log(tbs)
         if (tbs) {
             tabList.value = tbs
         }

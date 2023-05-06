@@ -68,7 +68,6 @@ export function asyncAddRoute (menus) {
         arr.forEach(e => {
             let item = asyncRoute.find(Routeitem => Routeitem.path == e.frontpath)
             if(item && !router.hasRoute(e.frontpath)) {
-                console.log(item)
                 router.addRoute("admin", item)
                 isNewRoute = true
             }
@@ -80,7 +79,6 @@ export function asyncAddRoute (menus) {
     }
 
     findRouteAndAsyncRoute(menus)
-    console.log(router.getRoutes())
     return isNewRoute
 }
 

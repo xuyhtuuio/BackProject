@@ -24,7 +24,6 @@ router.beforeEach(async (to, from, next) => {
     if (token) {
         await store.dispatch("getUserInfo", store)
         hasNewRoutes = asyncAddRoute(store.state.user.data.menus)
-        console.log(hasNewRoutes)
     }
     store.commit("change_login_state", false)
 
@@ -36,7 +35,6 @@ router.beforeEach(async (to, from, next) => {
 
 
 router.afterEach((to, from) => {
-    console.log("finish")
     endLoading()
 })
 

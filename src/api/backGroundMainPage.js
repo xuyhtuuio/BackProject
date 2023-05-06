@@ -11,3 +11,10 @@ export function getBackStatisticsThird (Timetype) {
         url: "admin/statistics3?type=".concat(Timetype)
     })
 }
+
+export function getBackStatisticsSecond () {
+    return MyAxios.get({
+        url : "/admin/statistics2"
+        }
+    )
+}
