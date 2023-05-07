@@ -57,6 +57,14 @@ const asyncRoute = [
         meta:{
             title:"分类列表"
         }
+    },
+    {
+        path : "/image/list",
+        name : "/image/list",
+        component : () => import("~/pages/picture/list.vue"),
+        meta : {
+            title: "图库列表"
+        }
     }
 ]
 

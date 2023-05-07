@@ -28,7 +28,7 @@ router.beforeEach(async (to, from, next) => {
     store.commit("change_login_state", false)
 
     //设置动态标题
-    document.title = (to.meta.title ? to.meta.title : "").concat("————您最坚实的后盾～").trim()
+    document.title = (to.meta.title ? to.meta.title : "").concat("——您最坚实的后盾～").trim()
     //如果添加了路由才能指定下一个跳转的地方，不然是死循环
     hasNewRoutes ? next(to.fullPath) : next()
 })
