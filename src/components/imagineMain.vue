@@ -38,10 +38,10 @@ const Props = defineProps({
 
 const handleChangePage = () => getPictureDataByPageAndId(currentPage.value, Props.id)
 
-function getPictureDataByPageAndId(page = 1, id) {
+async function getPictureDataByPageAndId(page = 1, id) {
   console.log(Props.id)
   loading.value = true
-  getPictureByClassic(id, page)
+  await getPictureByClassic(id, page)
       .then(e => {
         console.log(e)
         divList.value = e.data.list

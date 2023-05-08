@@ -71,17 +71,15 @@ const total = ref(0)
 const limit = ref(10)
 const currentIndex = ref(0)
 
-
-
 const AddDrawer = ref()
 const UploadDrawer = ref()
 const ChangeDrawer = ref()
-
 
 const getActive = (index) => {
   ActiveIndex.value = index
   emit("emitCurrentPage", divList.value[ActiveIndex.value].id)
 }
+
 const handleChangePage = () => getData(currentPage.value)
 const handleDelete = (index) => {
   currentIndex.value = index
@@ -148,7 +146,7 @@ function getData(page = 1) {
         divList.value = e.data.list
         total.value = e.data.totalCount
         ActiveIndex.value = 0
-
+        getActive(0)
       })
       .finally(() => loading.value = false)
 }
