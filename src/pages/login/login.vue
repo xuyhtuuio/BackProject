@@ -36,7 +36,8 @@
           </el-input>
         </el-form-item>
         <el-form-item>
-          <el-button round color="#626aef" class="w-[250px]" type="primary" @click="onSubmit" :loading="loading">提交
+          <el-button round color="#626aef" class="w-[250px]" type="primary" @click="onSubmit" :loading="loading">
+            登录
           </el-button>
         </el-form-item>
       </el-form>

@@ -47,5 +47,13 @@ export function updatePasswordSuccess(message="修改成功") {
     })
 }
 
+export function universal(title, message, type="success") {
+    return ElNotification({
+        title,
+        message,
+        type,
+    })
+}
+
 
 

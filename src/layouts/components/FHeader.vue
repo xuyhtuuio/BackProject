@@ -31,7 +31,6 @@
         <span>
         <el-avatar :size="35" :src="$store.state.user.data.avatar"/>
          </span>
-         {{ $store.state.user.data.username }}
          <el-icon class="el-icon--right">
            <arrow-down/>
          </el-icon>
@@ -45,7 +44,7 @@
         </el-dropdown>
 
         <flodDrawer ref="flodDrawerRef" submit-msg="提交" title="修改密码" @submit="onSubmit">
-          <el-form ref="formRef" :rules="rules" :model="form" label-width="100px" small>-->
+          <el-form ref="formRef" :rules="rules" :model="form" label-width="100px" small>
             <el-form-item prop="oldpassword" label="旧密码">
               <el-input v-model="form.oldpassword" placeholder="请输入旧密码"/>
             </el-form-item>

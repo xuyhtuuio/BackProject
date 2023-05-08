@@ -50,7 +50,6 @@ export function encaChangePassword() {
                 message: '长度为3-12个！！',
                 trigger: 'blur'
             },
-
         ]
     }
     const onSubmit = () => {
