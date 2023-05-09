@@ -31,10 +31,6 @@
     </el-form>
   </flod-drawer>
 
-  <flod-drawer ref="UploadDrawer" submit-msg="上传" title="上传图片" @submit="handleUpload">
-
-  </flod-drawer>
-
   <flod-drawer ref="ChangeDrawer" submit-msg="修改" title="修改" @submit="handleChange">
     <el-form ref="formRef" :rules="rules" :model="form" label-width="100px" small>
       <el-form-item prop="name" label="名称">
@@ -56,11 +52,13 @@ import {
   DeleteClassicAboutPicture,
   getImagineList
 } from "~/api/imagineManage.js";
+
 import {reactive, ref} from "vue";
 import FlodDrawer from "~/components/flodDrawer.vue";
 import {universal} from "~/utils/pop.js";
 import popModal from "~/utils/popmodal.js";
 import {ElMessage} from "element-plus";
+import UploadFile from "~/components/UploadFile.vue";
 
 
 const divList = ref([])
@@ -72,7 +70,7 @@ const limit = ref(10)
 const currentIndex = ref(0)
 
 const AddDrawer = ref()
-const UploadDrawer = ref()
+
 const ChangeDrawer = ref()
 
 const getActive = (index) => {
@@ -105,7 +103,7 @@ const handleEdit = (index) => {
 }
 
 const AddopenDrawer = () => AddDrawer.value.open()
-const UploadopenDrawer = () => UploadDrawer.value.open()
+
 const EditopenDrawer = () => ChangeDrawer.value.open()
 const AddcloseDrawer = () => AddDrawer.value.close()
 const UploadcloseDrawer = () => UploadDrawer.value.close()
@@ -127,12 +125,11 @@ const handleAdd = () => AddClassicAboutPicture(form)
       getData(currentPage.value)
     })
     .catch(err => console.log("添加失败", err))
-const handleUpload = () => console.log(12345)
+
 
 
 defineExpose({
   AddopenDrawer,
-  UploadopenDrawer,
   EditopenDrawer
 })
 

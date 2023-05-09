@@ -1,4 +1,4 @@
-import {ElNotification} from "element-plus";
+import {ElNotification, ElMessageBox, ElMessage} from "element-plus";
 
 export function NoPermission() {
     return ElNotification({
@@ -53,6 +53,14 @@ export function universal(title, message, type="success") {
         message,
         type,
     })
+}
+
+export function universalPopMessage (message, title, confirmText, cancelText) {
+    return ElMessageBox.prompt(message, title, {
+        confirmButtonText: confirmText,
+        cancelButtonText: cancelText,
+    })
+
 }
 
 

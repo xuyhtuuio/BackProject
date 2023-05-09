@@ -12,6 +12,7 @@ const store = createStore({
             //展开或缩起菜单
             asideWidth: "250px",
             rules : [],
+
         }
     },
     mutations: {

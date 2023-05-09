@@ -9,7 +9,7 @@
         <div class="main">
           <slot></slot>
         </div>
-        <div class="action">
+        <div class="action" v-if="!disapperaButton">
           <el-button type="primary" @click="submit">
             {{submitMsg}}
           </el-button>
@@ -33,7 +33,12 @@ defineProps({
   },
   title: {
     default: ""
+  },
+  disapperaButton: {
+    type: Boolean,
+    default: false
   }
+
 })
 
 const emit = defineEmits(["submit"])

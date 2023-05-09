@@ -1,9 +1,27 @@
 <template>
   <el-main class="main" v-loading="loading">
     <div class="top">
-      <imagine-item v-for="(item, index) in divList">
-        {{ item }}
-      </imagine-item>
+      <el-row :gutter="20" class="row">
+        <el-col :offset="0"
+                :span="6"
+                v-for="(item, index) in divList"
+                :key="index"
+        >
+          <el-card shadow="hover" :body-style="{padding : `0px`}">
+            <el-image fit="cover"
+                      :src="item.url"
+                      class="imagine"
+                      :preview-src-list="[item.url]"
+                      :initial-index="0"
+            />
+            <div class="intro truncate">{{ item.name }}</div>
+            <div class="option flex items-center justify-center p-5" style="height: 20px; width: 100% ">
+              <el-button text class="option" @click="ResetPictureName(item.id)">重命名</el-button>
+              <el-button text class="option" @click="HandleDeletePicture(item.id)">删除</el-button>
+            </div>
+          </el-card>
+        </el-col>
+      </el-row>
     </div>
     <div class="bottom">
       <el-pagination background layout="prev, pager, next"
@@ -12,14 +30,27 @@
                      @current-change="handleChangePage"
                      v-model:current-page="currentPage"/>
     </div>
-
   </el-main>
+
+  <flod-drawer ref="UploadDrawer" disappera-button title="上传图片" @submit="handleUpload" >
+    <UploadFile :data="{image_class_id}" @success="handleUploadSuccess"/>
+  </flod-drawer>
 </template>
 
 <script setup>
 import {ref} from "vue";
-import {getImagineList, getPictureByClassic} from "~/api/imagineManage.js";
+import {changePictureName, DeletePicture, getImagineList, getPictureByClassic} from "~/api/imagineManage.js";
 import ImagineItem from "~/components/ImagineItem.vue";
+import {universal, universalPopMessage} from "~/utils/pop.js";
+import {ElMessage} from "element-plus";
+import FlodDrawer from "~/components/flodDrawer.vue";
+import UploadFile from "~/components/UploadFile.vue";
+
+
+const UploadDrawer = ref()
+
+
+
 
 const total = ref(0)
 const limit = ref(10)
@@ -29,17 +60,25 @@ const divList = ref([])
 
 
 const Props = defineProps({
-  id: {
+  image_class_id: {
     type: Number,
-    default: 173
+    default: 168
   }
 })
 
+defineEmits(["JustGetData"])
+//控制抽屉开关
+const UploadopenDrawer = () => UploadDrawer.value.open()
+const UploadcloseDrawer = () => UploadDrawer.value.close()
+
+//处理图片上传
+const handleUpload = () => {
+  UploadcloseDrawer()
+}
 
 const handleChangePage = () => getPictureDataByPageAndId(currentPage.value, Props.id)
 
 async function getPictureDataByPageAndId(page = 1, id) {
-  console.log(Props.id)
   loading.value = true
   await getPictureByClassic(id, page)
       .then(e => {
@@ -50,11 +89,36 @@ async function getPictureDataByPageAndId(page = 1, id) {
       .finally(() => loading.value = false)
 }
 
-getPictureDataByPageAndId(1, Props.id)
+getPictureDataByPageAndId(1, Props.image_class_id)
+
+const inputValue = ref("")
+const ResetPictureName = async (PictureId) => {
+   await universalPopMessage("请输入要修改图片的名称", "修改", "修改", "取消")
+      .then(({value}) => {
+        ElMessage({
+          type: 'success',
+          message: `修改成功`,
+        })
+        inputValue.value = value
+      })
+   changePictureName(PictureId, inputValue.value).then(r => getPictureDataByPageAndId(currentPage.value, Props.image_class_id))
+}
+const HandleDeletePicture = (PictureId) => DeletePicture([PictureId])
+    .then(r => getPictureDataByPageAndId(currentPage.value, Props.image_class_id))
+    .catch(err => console.log(err))
+
+const handleUploadSuccess = () => {
+  getPictureDataByPageAndId(currentPage.value, Props.image_class_id)
+      .then(r => {
+        UploadcloseDrawer()
+        universal("好棒", "🏅️", "success")
+      })
+}
 
 
 defineExpose({
-  getPictureDataByPageAndId
+  getPictureDataByPageAndId,
+  UploadopenDrawer
 })
 </script>
 
@@ -82,4 +146,33 @@ defineExpose({
   @apply flex items-center justify-center;
 }
 
+.row {
+  padding: 15px;
+}
+
+.el-col {
+  margin-bottom: 15px;
+}
+
+.imagine {
+  width: 100%;
+  height: 150px;
+  display: block;
+}
+
+.intro {
+  background-color: rgba(126, 116, 116, 0.5);
+  margin-top: -34px;
+  z-index: 100;
+  position: relative;
+  color: #eeeeee;
+  box-sizing: border-box;
+  padding: 5px;
+  text-align: left;
+}
+
+.option {
+  color: dodgerblue;
+
+}
 </style>

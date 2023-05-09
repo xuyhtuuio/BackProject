@@ -6,7 +6,7 @@
     </el-header>
     <el-container>
       <imagine-aside ref="imagineAside" @emitCurrentPage="getCurrentIDAndBeginEmit"/>
-      <imagine-main :id="ImagineId" ref="imagineMain"/>
+      <imagine-main :image_class_id="ImagineId" ref="imagineMain"/>
     </el-container>
   </el-container>
 </template>
@@ -22,9 +22,10 @@ const imagineAside = ref()
 const ImagineId = ref()
 const imagineMain = ref()
 const handleAddCLassicAbPicture = () => imagineAside.value.AddopenDrawer()
-const handleUploadPicture = () => imagineAside.value.UploadopenDrawer()
+const handleUploadPicture = () => imagineMain.value.UploadopenDrawer()
 
 const getCurrentIDAndBeginEmit = (ID) => {
+  console.log(ID)
   ImagineId.value = ID
   imagineMain.value.getPictureDataByPageAndId(1, ID)
 }
