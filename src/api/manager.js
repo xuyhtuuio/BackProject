@@ -31,4 +31,22 @@ export function changePassword (data) {
     })
 }
 
+export function getMangerList (page, pt={
+    limit : 10,
+    keyword: "ceshi"
+}) {
+
+    //拼接处理
+    const ConcatArr = []
+    for (let key in pt) {
+        if(pt[key]) {
+            ConcatArr.push(`${key}=${encodeURIComponent(pt[key])}`)
+        }
+    }
+    const result = ConcatArr.join("&")
+    return MyAxios.post({
+            url: `/admin/manager/${page}?` + result
+    })
+}
+
 

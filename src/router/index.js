@@ -28,7 +28,6 @@ export const router = createRouter({
                 title: "登陆界面"
             }
         },
-
     ]
 })
 
@@ -65,7 +64,23 @@ const asyncRoute = [
         meta : {
             title: "图库列表"
         }
-    }
+    },
+    {
+        path : "/notice/list",
+        name : "/notice/list",
+        component : () => import("~/pages/notice/list.vue"),
+        meta : {
+            title: "公告列表"
+        }
+    },
+    {
+        path : "/manager/list",
+        name : "/manager/list",
+        component : () => import("~/pages/manager/list.vue"),
+        meta : {
+            title: "管理员列表"
+        }
+    },
 ]
 
 

@@ -17,7 +17,15 @@
             <div class="intro truncate">{{ item.name }}</div>
             <div class="option flex items-center justify-center p-5" style="height: 20px; width: 100% ">
               <el-button text class="option" @click="ResetPictureName(item.id)">重命名</el-button>
-              <el-button text class="option" @click="HandleDeletePicture(item.id)">删除</el-button>
+              <el-popconfirm
+                  title="是否删除该图片？"
+                  confirmButtonText="确认"
+                  cancelButtonText="取消"
+                  @confirm="HandleDeletePicture(item.id)">
+                <template #reference>
+                  <el-button text class="option" >删除</el-button>
+                </template>
+              </el-popconfirm>
             </div>
           </el-card>
         </el-col>
@@ -76,7 +84,7 @@ const handleUpload = () => {
   UploadcloseDrawer()
 }
 
-const handleChangePage = () => getPictureDataByPageAndId(currentPage.value, Props.id)
+const handleChangePage = () => getPictureDataByPageAndId(currentPage.value, Props.image_class_id)
 
 async function getPictureDataByPageAndId(page = 1, id) {
   loading.value = true
