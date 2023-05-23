@@ -1,4 +1,5 @@
 import MyAxios from "~/service/request/MyAxios.js";
+import {concatURL} from "~/utils/managerUtil.js";
 
 
 export function login(username, password) {
@@ -33,19 +34,26 @@ export function changePassword (data) {
 
 export function getMangerList (page, pt={
     limit : 10,
-    keyword: "ceshi"
+    keyword: ""
 }) {
-
     //拼接处理
-    const ConcatArr = []
-    for (let key in pt) {
-        if(pt[key]) {
-            ConcatArr.push(`${key}=${encodeURIComponent(pt[key])}`)
-        }
-    }
-    const result = ConcatArr.join("&")
+    const r = concatURL(pt)
+    return MyAxios.get({
+            url: `/admin/manager/${page}?` + r
+    })
+}
+
+export function deleteManagerList (id) {
     return MyAxios.post({
-            url: `/admin/manager/${page}?` + result
+        url: `/admin/manager/${id}/delete`
+    })
+}
+
+
+export function changeManager (id, data) {
+    return MyAxios.post({
+        url: `/admin/manager/${id}`,
+        data
     })
 }
 

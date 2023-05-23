@@ -1,8 +1,13 @@
 <template>
   <el-card shadow='never'>
+    <Search :model="searchForm" @search="getData" @reset="resetSearchForm">
+      <SearchItem label="关键词">
+        <el-input v-model="searchForm.keyword" placeholder="管理员昵称" clearable></el-input>
+      </SearchItem>
+    </Search>
     <ListAddAndRefresh ref="AddAndRefresh" @handle-refresh="Refresh" @handle-add-oth="handleAddNotice"/>
     <div class="main pb-5 pt-5">
-      <el-table :data="NoticeList" stripe style="width: 100%" v-loading="loading">
+      <el-table :data="ManagerList" stripe style="width: 100%" v-loading="loading">
         <el-table-column label="管理员" width="200">
           <template #default="{ row }">
             <div class="flex items-center">
@@ -25,7 +30,8 @@
         </el-table-column>
         <el-table-column label="状态" width="120">
           <template #default="{ row }">
-            <el-switch :modelValue="row.status" :active-value="1" :inactive-value="0" :loading="row.statusLoading" :disabled="row.super == 1"  @change="handleStatusChange($event,row)">
+            <el-switch :modelValue="row.status" :active-value="1" :inactive-value="0" :loading="row.statusLoading"
+                       :disabled="row.super == 1" @change="handleStatusChange($event,row)">
             </el-switch>
           </template>
         </el-table-column>
@@ -35,7 +41,8 @@
             <div v-else>
               <el-button type="primary" size="small" text @click="handleEdit(scope.row)">修改</el-button>
 
-              <el-popconfirm title="是否要删除该管理员？" confirmButtonText="确认" cancelButtonText="取消" @confirm="handleDelete(scope.row.id)">
+              <el-popconfirm title="是否要删除该管理员？" confirmButtonText="确认" cancelButtonText="取消"
+                             @confirm="handleDelete(scope.row.id)">
                 <template #reference>
                   <el-button text type="primary" size="small">删除</el-button>
                 </template>
@@ -55,7 +62,7 @@
     </div>
   </el-card>
 
-  <flod-drawer ref="formDrawerRef" title="drawerTitle" @submit="handleChangeSubmit">
+  <flod-drawer ref="formDrawerRef" :title="drawerTitle" @submit="handleChangeSubmit">
     <el-form :model="form" ref="formRef" :rules="rules" label-width="80px" :inline="false">
       <el-form-item label="用户名" prop="username">
         <el-input v-model="form.username" placeholder="用户名"></el-input>
@@ -64,7 +71,7 @@
         <el-input v-model="form.password" placeholder="密码"></el-input>
       </el-form-item>
       <el-form-item label="头像" prop="avatar">
-        <ChooseImage v-model="form.avatar"/>
+        <ChooseImagine v-model="form.avatar" @emitURL="changeURL"/>
       </el-form-item>
       <el-form-item label="所属角色" prop="role_id">
         <el-select v-model="form.role_id" placeholder="选择所属角色">
@@ -85,67 +92,97 @@
 </template>
 
 <script setup>
-import {reactive, ref} from "vue";
+import {computed, reactive, ref} from "vue";
 import ListAddAndRefresh from "~/components/ListAddAndRefresh.vue";
 import {AddNoticeList, changeNotice, DeleteNotice, getNoticeList} from "~/api/NoticeMange.js";
 import FlodDrawer from "~/components/flodDrawer.vue";
 import {universal} from "~/utils/pop.js";
-import {getMangerList} from "~/api/manager.js";
+import {changeManager, deleteManagerList, getMangerList} from "~/api/manager.js";
+import ChooseImagine from "~/components/ChooseImagine.vue";
+import Search from "~/components/Search.vue";
+import SearchItem from "~/components/SearchItem.vue";
 
 
 const AddAndRefresh = ref()
 const formDrawerRef = ref()
+const formRef = ref()
 
-
+const roles = ref([])
 const total = ref(0)
 const limit = ref(10)
-const NoticeList = ref([])
+const ManagerList = ref([])
 const currentPage = ref(1)
 const loading = ref(false)
-const NoticeId = ref(0)
+const managerID = ref(0)
+const imagineId = ref(0)
 
-const handleChangePage = () => getNoticeLs(currentPage.value)
+
+const handleChangePage = () => getManagerLs(currentPage.value)
 
 
-function getNoticeLs(page) {
+const drawerTitle = computed(() => managerID.value ? "修改" : "增加")
+
+
+function getManagerLs(page) {
   loading.value = true
   getMangerList(page)
       .then(r => {
-        NoticeList.value = r.data.list
+        console.log(r)
+        ManagerList.value = r.data.list
         total.value = r.data.totalCount
+        roles.value = r.data.roles
       })
       .catch(err => console.log("获取失败", err))
       .finally(() => loading.value = false)
 }
 
-getNoticeLs(currentPage.value)
+getManagerLs(currentPage.value)
 
 
 //处理刷新
-const Refresh = () => AddAndRefresh.value.handleRefresh(getNoticeLs, currentPage.value)
+const Refresh = () => AddAndRefresh.value.handleRefresh(getManagerLs, currentPage.value)
 
 //处理修改
-const handleEdit = (index, row) => {
+const handleEdit = (row) => {
+  console.log(row)
   formDrawerRef.value.open()
-  NoticeId.value = row.id
-  form.title = row.title
-  form.content = row.content
+  imagineId.value = row.id
+  giveData(row)
+
 }
 
+
+const changeURL = (imagineURL) => form.avatar = imagineURL
+
+
+const giveData = (row) => {
+  for (const key in row) {
+    form[key] = row[key]
+  }
+}
+
+
 const handleChangeSubmit = async () => {
-  await changeNotice(NoticeId.value, form)
-      .then(r => universal("牛", "修改成功", "success"))
-      .catch(err => console.log("修改失败", err))
+
+   await changeManager(imagineId.value, form).then(r => {
+          console.log(form)
+          console.log(r)
+
+        }
+    )
+
+
 
   //重新获取公告数据
-  Refresh()
+
   formDrawerRef.value.close()
+  Refresh()
 }
 
 
 //处理删除
-const handleDelete = async (index, row) => {
-  await DeleteNotice(row.id)
+const handleDelete = async (id) => {
+  await deleteManagerList(id)
       .then(r => universal("牛", "删除成功", "success"))
       .catch(err => console.log("删除失败", err))
 
@@ -156,12 +193,23 @@ const handleDelete = async (index, row) => {
 //处理新增
 const handleAddNotice = () => {
   formDrawerRef.value.open()
-  //清空内容
-  if(form.title || form.content) {
-    form.title = form.content = ""
-  }
+  resetForm({
+    username: "",
+    password: "",
+    role_id: null,
+    status: 1,
+    avatar: ""
+  })
 }
 
+
+const resetForm = (Resetdform) => {
+  //清空内容
+  formRef.value.clearValidate()
+  for (const key in Resetdform) {
+    form[key] = Resetdform[key]
+  }
+}
 
 const handleAddSubmit = async () => {
   await AddNoticeList(form)
@@ -173,24 +221,18 @@ const handleAddSubmit = async () => {
 }
 
 
-
-const form = reactive({
-  title: "",
-  content: ""
+let form = reactive({
+  username: "",
+  password: "",
+  role_id: null,
+  status: 1,
+  avatar: ""
 })
 
-const rules = {
-  title: [{
-    required: true,
-    message: '公告标题不能为空',
-    trigger: 'blur'
-  }],
-  content: [{
-    required: true,
-    message: '公告内容不能为空',
-    trigger: 'blur'
-  }]
+let searchForm = {
+  keyword: ""
 }
+
 </script>
 
 <style scoped>

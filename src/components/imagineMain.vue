@@ -7,7 +7,8 @@
                 v-for="(item, index) in divList"
                 :key="index"
         >
-          <el-card shadow="hover" :body-style="{padding : `0px`}">
+          <el-card shadow="hover" :body-style="{padding : `0px`}" :class="{ 'border-blue-500':item.checked }">
+
             <el-image fit="cover"
                       :src="item.url"
                       class="imagine"
@@ -16,6 +17,9 @@
             />
             <div class="intro truncate">{{ item.name }}</div>
             <div class="option flex items-center justify-center p-5" style="height: 20px; width: 100% ">
+              <div class="checked ml-2 space-x-8" v-if="isChecked" >
+                <el-checkbox v-model="item.checked" @change="handleChecked(item)"></el-checkbox>
+              </div>
               <el-button text class="option" @click="ResetPictureName(item.id)">重命名</el-button>
               <el-popconfirm
                   title="是否删除该图片？"
@@ -46,7 +50,7 @@
 </template>
 
 <script setup>
-import {ref} from "vue";
+import {computed, ref} from "vue";
 import {changePictureName, DeletePicture, getImagineList, getPictureByClassic} from "~/api/imagineManage.js";
 import ImagineItem from "~/components/ImagineItem.vue";
 import {universal, universalPopMessage} from "~/utils/pop.js";
@@ -66,15 +70,19 @@ const loading = ref(false)
 const currentPage = ref(1)
 const divList = ref([])
 
-
 const Props = defineProps({
   image_class_id: {
     type: Number,
     default: 168
+  },
+
+  isChecked: {
+    type: Boolean,
+    default: false
   }
 })
 
-defineEmits(["JustGetData"])
+
 //控制抽屉开关
 const UploadopenDrawer = () => UploadDrawer.value.open()
 const UploadcloseDrawer = () => UploadDrawer.value.close()
@@ -91,7 +99,10 @@ async function getPictureDataByPageAndId(page = 1, id) {
   await getPictureByClassic(id, page)
       .then(e => {
         console.log(e)
-        divList.value = e.data.list
+        divList.value = e.data.list.map(item => {
+          item.checked = false
+          return item
+        })
         total.value = e.data.totalCount
       })
       .finally(() => loading.value = false)
@@ -111,6 +122,8 @@ const ResetPictureName = async (PictureId) => {
       })
    changePictureName(PictureId, inputValue.value).then(r => getPictureDataByPageAndId(currentPage.value, Props.image_class_id))
 }
+
+
 const HandleDeletePicture = (PictureId) => DeletePicture([PictureId])
     .then(r => getPictureDataByPageAndId(currentPage.value, Props.image_class_id))
     .catch(err => console.log(err))
@@ -123,11 +136,26 @@ const handleUploadSuccess = () => {
       })
 }
 
+//获取已经被点击的
+const HasCheckedBox = computed(() => divList.value.filter((item, index) => item.checked))
+
+const handleChecked = (item) => {
+  emit("emitImagineURL", item.url)
+  if(item.checked && HasCheckedBox.value.length > 1) {
+    item.checked = false
+    universal("不行", "最多只能选中一张","error")
+  }
+}
+
 
 defineExpose({
   getPictureDataByPageAndId,
   UploadopenDrawer
 })
+
+
+const emit = defineEmits(["JustGetData", "emitImagineURL"])
+
 </script>
 
 <style scoped>
